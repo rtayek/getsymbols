@@ -1,0 +1,1 @@
+split -d --lines=10000 --additional-suffix=.csv /d/data/yahoosymbols.csv ystocks
