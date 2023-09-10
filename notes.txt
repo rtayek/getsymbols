@@ -1,0 +1,2 @@
+r is just wierd. no easy way to read or write.
+seems linme you mist used read lines and write lines.
