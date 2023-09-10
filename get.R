@@ -4,6 +4,11 @@ to=Sys.Date()
 #symbols<-read.csv("d:\\data\\yahoosymbols.csv")
 readOne<-function(filename) {
     symbols<-read.csv(filename)
+    print(nrow(symbols))
+    if(nrow(symbols)==0) {
+        print("0 rows!")
+        return(0)
+    }
     df<-symbols[0,]
     print(df)
     good<-0
@@ -11,6 +16,7 @@ readOne<-function(filename) {
     for(i in 1:nrow(symbols)) {
         row<-symbols[i,]
         symbol<-row[[1]]
+        print(symbol)
         if(n>5) break
         tryCatch(
             expr = {
@@ -34,7 +40,7 @@ readOne<-function(filename) {
     print(sprintf("%d %d",good,n))
     print("df")
     print(df)
-    outputFile<-paste("out.",filename,".csv",sep="")
+    outputFile<-paste("out.",filename,sep="")
     write.csv(df,file=outputFile)
     newDf<-read.csv(outputFile)
     print(names(symbols))
@@ -46,5 +52,5 @@ readOne<-function(filename) {
     
     
 }
-readOne("x00")
+readOne("ystocks00.csv")
 
