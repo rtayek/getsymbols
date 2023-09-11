@@ -16,12 +16,12 @@ readOne<-function(filename) {
     for(i in 1:nrow(symbols)) {
         row<-symbols[i,]
         symbol<-row$Ticker
-        if(n>5) break
+        if(n>10) break
         tryCatch(
             expr = {
                 getSymbols(symbol,src="yahoo",from=from,to=to)
                 good=good+1
-                print(sprintf("good: %s %d %d",symbol,good,n))
+                #print(sprintf("good: %s %d %d",symbol,good,n))
                 df[nrow(df)+1,]<-row
             },
             error = function(e){ 
@@ -40,7 +40,7 @@ readOne<-function(filename) {
     print("df")
     print(df)
     outputFile<-paste("out.",filename,sep="")
-    write.csv(df,file=outputFile)
+    write.csv(df,file=outputFile,row.names=FALSE)
     if(F) {
         newDf<-read.csv(outputFile)
         print(names(symbols))
@@ -51,6 +51,7 @@ readOne<-function(filename) {
         print(df==newDf)
     }
 }
-#readOne("ystocks00.csv")
+readOne("ystocks00.csv")
+print("-----------------------")
 readOne("out.ystocks00.csv")
 
