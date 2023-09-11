@@ -1,7 +1,6 @@
 library(quantmod)
 from=Sys.Date()-365
 to=Sys.Date()
-#symbols<-read.csv("d:\\data\\yahoosymbols.csv")
 readOne<-function(filename) {
     symbols<-read.csv(filename)
     print(nrow(symbols))
@@ -9,13 +8,9 @@ readOne<-function(filename) {
         print("0 rows!")
         return(0)
     }
-    print(sprintf("%5s has %d rows.",filename,nrow(symbols)))
-    df<-symbols[0,]
-    good<-0
-    n<-0
     for(i in 1:nrow(symbols)) {
         row<-symbols[i,]
-        symbol<-row$Ticker
+        symbol<-row[[1]]
         if(n>5) break
         tryCatch(
             expr = {
@@ -36,21 +31,18 @@ readOne<-function(filename) {
         )
         n<-n+1
     }
-    print(sprintf("%d good out of %d",good,n))
+    print(sprintf("%d %d",good,n))
     print("df")
     print(df)
     outputFile<-paste("out.",filename,sep="")
     write.csv(df,file=outputFile)
-    if(F) {
-        newDf<-read.csv(outputFile)
-        print(names(symbols))
-        print(names(df))
-        print(nrow(df))
-        print(names(newDf))
-        print(nrow(newDf))
-        print(df==newDf)
-    }
+    newDf<-read.csv(outputFile)
+    print(names(symbols))
+    print(names(df))
+    print(nrow(df))
+    print(names(newDf))
+    print(nrow(newDf))
+    print(df==newDf)
 }
-#readOne("ystocks00.csv")
-readOne("out.ystocks00.csv")
+readOne("ystocks00.csv")
 
