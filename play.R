@@ -1,48 +1,67 @@
-#library(quantmod)
-#from<-Sys.Date()-365
-#to<-Sys.Date()
-br0<-1
-play <- list(symbol=NULL,br=br0,bet=1,prices=NULL,buys=0,wins=0)
-class(play) <- "Play"
-print.play<-function(obj) {
-    cat("symbol: ", obj$symbol, ", br: ",obj$br, "\n")
+library(quantmod)
+# https://saturncloud.io/blog/creating-an-s3-class-in-an-r-package-a-comprehensive-guide/
+from<-Sys.Date()-365
+to<-Sys.Date()
+initialBankroll<-1
+Play <- function(symbol=character(),prices = numeric()) {
+    structure(
+        list(
+            symbol = symbol,
+            bankroll = initialBankroll,
+            bet = 1,
+            prices = prices,
+            buys = 0,
+            wins = 0,
+            rake = 0,
+            totalRake = 0
+        ),
+        class = "MyPlay"
+    )
 }
-play
+print.MyPlay <- function(o, ...) {
+    cat("symbol: ", o$symbol,
+        ", br: ",o$bankroll,
+        ", bet: ",o$bet,
+        ", buys: ",o$buys,
+        ", wins: ",o$wins,
+        ", rake: ",o$rake,
+        ", totalRake: ",o$totalRake,
+        "\n")
+}
+x=c(1.,2.,3.)
+play<-Play("abcd",x)
 print(play)
-one<-function(buy,i, boughtAt) { # one day
+
+one.MyPlay<-function(o,buy,i, boughtAt) { # one day
     if(boughtAt==0) { # new buy?
-            if(buy(i,prices)) {
-                buffer=3;
-                boughtAt=prices[i-1]
-                betAmount=bankroll*bet
-                bankroll<-betAmount
-                rakeAmount=betAmount*rake
-                totalRake+=rakeAmount
-                betAmount-=rakeAmount
-                buys=buys+1
+            if(buy(i,o$prices)) {
+                buffer=3
+                boughtAt=o$prices[i-1]
+                betAmount=o$bankroll*o$bet
+                bankroll<-betAmount #
+                rakeAmount=betAmount*o$rake
+                totalRake=totalRake+o$rakeAmount #
+                betAmount=betAmount+o$rakeAmount
+                o$buys=o$buys+1 #
                 sell(boughtAt,i,betAmount);
-                boughtAt=0;
+                boughtAt=0
             } else {
-                //System.out.println("no buy");
+                print("no buy");
             }
-    } else { // we are holding some
-        // this was never implemented
+    } else { # we are holding some
+        # this was never implemented
     }
-    return boughtAt;
+    return(boughtAt)
 }
 
-run<-function(play) {
+run.MyPlay<-function(play) {
     boughtAt=0;
     for(i in 1:length(play$prices)) {
         if(bankroll<0) { System.out.println("broke!"); break; }
         boughtAt=one(buy,i,boughtAt);
+        print(play)
     }
 }
-
-
-
-
-
 buy0<-function(index,prices) { return(T) }
 buy1<-function(index,prices) {
     p1=prices[index-2]
