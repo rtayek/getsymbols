@@ -84,6 +84,7 @@ info<-function(name,x) {
     sprintf("name: %s, class: %s, type: %s",name,class(x),typeof(x))
 }
 sell.MyPlay <- function(o, boughtAt, index, betAmount) {
+    print("enter sell()")
     current = o$prices[index]
     change = current - boughtAt
     if (change > 0) {
@@ -96,28 +97,28 @@ sell.MyPlay <- function(o, boughtAt, index, betAmount) {
     if (TRUE)
         o$bankroll = o$bankroll + delta
     else
-        o$bankroll <- o$bankroll + betAmount # pretend no gain or loss.
-    # this is just to keep the bankroll constant.
+        o$bankroll <- o$bankroll + betAmount # pretend no gain or loss.  # this is just to keep the bankroll constant.
+    print(sprintf("br: %7.3f, previous: %7.3f, change: %7.3f, delta: %7.3f",o$bankroll,previous,change,delta))
     if (verbosity > 1)
         print(sprintf(
-            "profit %6.3f, br %17.3f, bought at %6.3f, current %6.3f, $ %6.3f\n",
+            "profit %6.3f, br %7.3f, bought at %6.3f, current %6.3f, $ %6.3f\n",
             profit,
             o$bankroll,
             boughtAt,
             current,
             current - boughtAt
-        ))s
-    
-    #if(verbosity>1)
-    #    print(index+", buys: "+buys+", wins: "+wins+", ties "+ties+", losses "+losses+", br: "+bankroll);
+        ))
+    print("exit sell()")
 }
 
 one.MyPlay <- function(o, buy, i, boughtAt) {
     # one day
+    print(sprintf("enter one(): %7.3f",o$bankroll))
     if (boughtAt == 0) {
         # new buy?
         if (buy(i, o$prices)) {
             # use instace of  ptices?
+            print(sprintf("one after buy: %7.3f",o$bankroll))
             boughtAt = o$prices[i - 1]
             betAmount = o$bankroll * o$bet
             o$bankroll = o$bankroll - betAmount #
@@ -125,7 +126,9 @@ one.MyPlay <- function(o, buy, i, boughtAt) {
             o$totalRake = o$totalRake + o$rakeAmount #
             betAmount = betAmount - rakeAmount
             o$buys = o$buys + 1 #
+            print(sprintf("in one() before sell: %7.3f",o$bankroll))
             sell.MyPlay(o, boughtAt, i, betAmount)
+            print(sprintf("in one() after sell: %7.3f",o$bankroll))
             boughtAt = 0
         } else {
             print("no buy")
@@ -148,6 +151,7 @@ run.MyPlay <- function(play, buy) {
         }
         boughtAt <- one.MyPlay(play, buy, i, boughtAt)
         print(play)
+        print("------------------------------------")
     }
 }
 x = c(1., 2., 3., 4., 5., 6., 7., 8, 9.)
