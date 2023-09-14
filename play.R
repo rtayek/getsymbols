@@ -6,6 +6,7 @@ initialBankroll <- 1
 buffer <- 5
 forecast <- 3
 verbosity <- 2
+id=0
 buy0 <- function(index, prices) {
     return(T)
 }
@@ -46,6 +47,7 @@ buy4 <- function(index, prices) {
 }
 Play <- function(symbol = character(),
                  prices = numeric()) {
+    id<-id+1
     structure(
         list(
             symbol = symbol,
@@ -55,13 +57,16 @@ Play <- function(symbol = character(),
             buys = 0,
             wins = 0,
             rake = 0,
-            totalRake = 0
+            totalRake = 0,
+            id=id
         ),
         class = "MyPlay"
     )
 }
 print.MyPlay <- function(o, ...) {
     cat(
+        "id: ",
+        o$id,
         "symbol: ",
         o$symbol,
         ", br: ",
@@ -98,7 +103,7 @@ sell.MyPlay <- function(o, boughtAt, index, betAmount) {
         o$bankroll = o$bankroll + delta
     else
         o$bankroll <- o$bankroll + betAmount # pretend no gain or loss.  # this is just to keep the bankroll constant.
-    print(sprintf("br: %7.3f, previous: %7.3f, change: %7.3f, delta: %7.3f",o$bankroll,previous,change,delta))
+    print(sprintf("id: %d, br: %7.3f, previous: %7.3f, change: %7.3f, delta: %7.3f",o$id,o$bankroll,previous,change,delta))
     if (verbosity > 1)
         print(sprintf(
             "profit %6.3f, br %7.3f, bought at %6.3f, current %6.3f, $ %6.3f\n",
@@ -144,6 +149,7 @@ one.MyPlay <- function(o, buy, i, boughtAt) {
 run.MyPlay <- function(play, buy) {
     boughtAt = 0
     for (i in buffer:(length(play$prices) - forecast)) {
+        print(play)
         print(sprintf("in run(): buffer: %d, index: %d, bought at: %f", buffer, i,boughtAt))
         if (play$bankroll < 0) {
             print("broke!")
