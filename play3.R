@@ -14,6 +14,21 @@ run <- function(symbol, prices, buy) {
     buys<-0
     wins<-0
     one <- function(i, boughtAt) {
+        
+        sell<-function(amountBet) {
+            current<-prices[i]
+            change<-current-boughtAt
+            if(change>0) wins<-wins+1
+            profit<-(current-boughtAt)/boughtAt
+            # hProfit().add(profit)
+            delta<-amountBet*(1+profit)
+            previous=bankroll
+            if(TRUE) bankroll<-bankroll+delta
+            else bankroll<-bankroll+amountBet # pretend no gain or loss.
+            # this is just to keep the bankroll constant.
+            print(sprintf("profit %6.3f, br %17.3f, bought at %6.3f, current %6.3f, $ %6.3f\n",profit,
+                                              bankroll,boughtAt,current,current-boughtAt))
+        }
         if (boughtAt == 0) {
             # new buy?
             if (buy(i, prices)) {
@@ -24,7 +39,7 @@ run <- function(symbol, prices, buy) {
                 totalRake <- totalRake + rakeAmount
                 betAmount <- betAmount - rakeAmount
                 buys <- buys + 1
-                sell(boughtAt, i, betAmount)
+                sell( betAmount)
                 boughtAt = 0
             } else {
                 print("no buy")
@@ -50,66 +65,6 @@ prices = c(1, 2, 3, 4, 5, 6, 7, 8, 9)
 symbol <- "GOOG"
 run(symbol, prices,buy0)
 
-public class Play {
-    public enum Result { win, tie, lose }
-    public Play(String filename,double[] prices) { this.filename=filename; this.prices=prices; }
-    public static double profit(double boughtAt,double current) {
-        double profit=(current-boughtAt)/boughtAt;
-        return profit;
-    }
-    public void sell(double boughtAt,int index,double amountBet) { // add bought price, then recurse
-        double current=prices[index];
-        double change=current-boughtAt;
-        Play.Result result=change>0?win:change==0?tie:lose;
-        switch(result) {
-            case win:
-                ++wins;
-            break;
-            case tie:
-                ++ties;
-            break;
-            case lose:
-                ++losses;
-            break;
-        }
-        double profit=(current-boughtAt)/boughtAt;
-        hProfit().add(profit);
-        double delta=amountBet*(1+profit);
-        double previous=bankroll;
-        if(true) bankroll+=delta;
-        else bankroll+=amountBet; // pretend no gain or loss.
-        // this is just to keep the bankroll constant.
-        if(verbosity>1) System.out.format("profit %6.3f, br %17.3f, bought at %6.3f, current %6.3f, $ %6.3f\n",profit,
-                                          bankroll,boughtAt,current,current-boughtAt);
-        if(verbosity>1) System.out
-        .println(index+", buys: "+buys+", wins: "+wins+", ties "+ties+", losses "+losses+", br: "+bankroll);
-    }
-    double one(BiPredicate<Integer,double[]> buy,int i,double boughtAt) { // one day
-        if(boughtAt==0) { // new buy?
-                if(buy.test(i,prices)) {
-                    buffer=3;
-                    boughtAt=prices[i-1];
-                    double betAmount=bankroll*bet;
-                    bankroll-=betAmount;
-                    double rakeAmount=betAmount*rake;
-                    totalRake+=rakeAmount;
-                    betAmount-=rakeAmount;
-                    ++buys;
-                    sell(boughtAt,i,betAmount);
-                    boughtAt=0;
-                } else {
-                    //System.out.println("no buy");
-                }
-        } else { // we are holding some
-            // this was never implemented
-        }
-        return boughtAt;
-    }
-    @Override public String toString() {
-        return "Play [name()="+name()+", bankroll()="+bankroll()+", eProfit()="+eProfit()+", sdProfit()="+sdProfit()
-        +", pptd()="+pptd()+", winRate()="+winRate()+", buyRate()="+buyRate()+", days()="+days()+", hProfit()="
-        +hProfit()+"]";
-    }
     public String toCSVLine() {
         String s=String.format("%-15s, %5.2f, %5.2f, %5.2f, %7.3f, %5.2f, %7.3f, %4d", //
                                    name(),bankroll(),eProfit(),sdProfit(), //
@@ -127,13 +82,6 @@ public class Play {
     public Double buyRate() { int n=wins+ties+losses; return n/(double)prices.length; }
     public int days() { return prices.length; }
     public Histogram hProfit() { return hProfit; }
-    void run(BiPredicate<Integer,double[]> buy) {
-        double boughtAt=0;
-        for(int i=buffer;i<prices.length-forecast;++i) {
-            if(bankroll<0) { System.out.println("broke!"); break; }
-            boughtAt=one(buy,i,boughtAt);
-        }
-    }
     void summary() { System.out.println("summary:"); System.out.println(this); }
     public static String toLine(String[] names,Object[] objects) {
         StringBuffer s=new StringBuffer();
