@@ -56,7 +56,7 @@ Play <- function(symbol = character(),
             prices = prices,
             buys = 0,
             wins = 0,
-            rake = 0,
+            rake = .01,
             totalRake = 0,
             id=id
         ),
@@ -118,22 +118,31 @@ sell.MyPlay <- function(o, boughtAt, index, betAmount) {
 
 one.MyPlay <- function(o, buy, i, boughtAt) {
     # one day
-    print(sprintf("enter one(): %7.3f",o$bankroll))
+    print(sprintf("enter one(), bankroll: %7.3f",o$bankroll))
     if (boughtAt == 0) {
         # new buy?
         if (buy(i, o$prices)) {
             # use instace of  ptices?
-            print(sprintf("one after buy: %7.3f",o$bankroll))
+            print(sprintf("one after buy, bankroll: %7.3f",o$bankroll))
             boughtAt = o$prices[i - 1]
-            betAmount = o$bankroll * o$bet
+            print("try to print bet")
+            print(o$bet)
+            betAmount = (o$bankroll) * (o$bet)
+            print("try to print bet amount")
+            print(sprintf("bet amount: %7.3f",betAmount))
             o$bankroll = o$bankroll - betAmount #
             rakeAmount = betAmount * o$rake
-            o$totalRake = o$totalRake + o$rakeAmount #
+            print("try to print rake amount.")
+            print(sprintf("rake amount: %7.3f",rakeAmount))
+            o$totalRake = o$totalRake + rakeAmount #
+            print(sprintf("total rake: %7.3f",o$totalRake))
             betAmount = betAmount - rakeAmount
+            print("try to print bet amount after rake")
+            print(sprintf("bet amount: %7.3f",betAmount))
             o$buys = o$buys + 1 #
-            print(sprintf("in one() before sell: %7.3f",o$bankroll))
+            print(sprintf("in one() before sell, bankroll: %7.3f",o$bankroll))
             sell.MyPlay(o, boughtAt, i, betAmount)
-            print(sprintf("in one() after sell: %7.3f",o$bankroll))
+            print(sprintf("in one() after sell, bankroll: %7.3f",o$bankroll))
             boughtAt = 0
         } else {
             print("no buy")
@@ -143,9 +152,10 @@ one.MyPlay <- function(o, buy, i, boughtAt) {
         # this was never implemented
         print("holding")
     }
+    print("try to print total rake")
+    print(o$totalRake)
     return(boughtAt)
 }
-
 run.MyPlay <- function(play, buy) {
     boughtAt = 0
     for (i in buffer:(length(play$prices) - forecast)) {
@@ -155,9 +165,12 @@ run.MyPlay <- function(play, buy) {
             print("broke!")
             break
         }
+        print(play$totalRake)
         boughtAt <- one.MyPlay(play, buy, i, boughtAt)
+        print(play$totalRake)
         print(play)
         print("------------------------------------")
+        break # for debugging
     }
 }
 x = c(1., 2., 3., 4., 5., 6., 7., 8, 9.)
