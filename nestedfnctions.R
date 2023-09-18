@@ -1,11 +1,12 @@
-Outer_func <- function(x) {
-    z<-100
-    Inner_func <- function(y) {
-        a <- x + y +z
-        return(a)
+f<-function() {
+    x<-1
+    g <- function(y) {
+        print(x)
+        x<-x+1 # how to access aabove?
+        return(x)
     }
-    r<-Inner_func(1)    
-    return (Inner_func)
+    r<-g(1)
+    print(x)
+    print(r)
 }
-output <- Outer_func(3) # To call the Outer_func
-output(5)
+f()

@@ -1,35 +1,35 @@
 buffer = 5
 forecast = 3
-initialBankroll = 1
-bet<-1
-rake = .01
+initialBankroll = 1.
+bet<-1. # ,25 seems to work
+rake = .00
 #
 buy0 <- function(index, prices) {
     return(T)
 }
 run <- function(symbol, prices, buy) {
     bankroll <- initialBankroll
-    boughtAt <- 0 # swithc for buy and hold - change the name
-    totalRake<-0
+    boughtAt <- 0. # swithc for buy and hold - change the name
+    totalRake<-0.
     buys<-0
     wins<-0
     one <- function(i, boughtAt) {
-        
         sell<-function(amountBet) {
             current<-prices[i]
             change<-current-boughtAt
             if(change>0) wins<-wins+1
-            profit<-(current-boughtAt)/boughtAt
+            profit<-(current-boughtAt)/boughtAt # per share
             # hProfit().add(profit)
             delta<-amountBet*(1+profit)
-            previous=bankroll
+            previous<-bankroll
             if(TRUE) bankroll<-bankroll+delta
             else bankroll<-bankroll+amountBet # pretend no gain or loss.
             # this is just to keep the bankroll constant.
-            print(sprintf("profit %6.3f, br %17.3f, bought at %6.3f, current %6.3f, $ %6.3f\n",profit,
+            print(sprintf("in sell, previous bankroll: %7.3f, change: %7.3f,  delta: %7.3f",previous,change,delta))
+            print(sprintf("end of sell, profit(b4): %6.3f, br %7.3f, bought at %6.3f, current %6.3f, $ %6.3f\n",profit,
                                               bankroll,boughtAt,current,current-boughtAt))
-        }
-        if (boughtAt == 0) {
+        } # end of sell
+        if (boughtAt == 0.) {
             # new buy?
             if (buy(i, prices)) {
                 boughtAt <- prices[i - 1]
@@ -39,8 +39,11 @@ run <- function(symbol, prices, buy) {
                 totalRake <- totalRake + rakeAmount
                 betAmount <- betAmount - rakeAmount
                 buys <- buys + 1
+                print(sprintf("bet amount: %7.3f",betAmount))
+                print(sprintf("before sell, bankroll: %7.3f",bankroll))
                 sell( betAmount)
-                boughtAt = 0
+                print(sprintf("after sell, bankroll: %7.3f",bankroll))
+                boughtAt = 0.
             } else {
                 print("no buy")
             }
@@ -51,17 +54,20 @@ run <- function(symbol, prices, buy) {
         return(boughtAt)
         
     }
-    r <- buffer:(length(prices) - forecast)
+    r <- (buffer+1):(length(prices) - forecast)
     for (i in r) {
-        if (bankroll <= 0) {
+        print(sprintf("index: %d, bankroll: %7.3f",i,bankroll))
+        if (bankroll <= 0.) {
             print("broke!")
             return(NULL)
         }
         print(prices[i])
         boughtAt <- one(i,boughtAt)
+        print(sprintf("at end of loop, bankroll: %7.3f",bankroll))
+        print("------------------------------")
     }
 }
-prices = c(1, 2, 3, 4, 5, 6, 7, 8, 9)
+prices = c(1, 2, 3, 4, 5, 6, 7, 8, 9,10)
 symbol <- "GOOG"
 run(symbol, prices,buy0)
 
@@ -72,17 +78,7 @@ run(symbol, prices,buy0)
         if(false) s+=String.format(", \"%s\"",hProfit());
         return s;
     }
-    public static String header() { return "name,bankroll,eProfit,sdProfit,pptd,winRate,buyRate,days,hProfit"; }
-    public String name() { return filename; }
-    public Double bankroll() { return bankroll; }
-    public Double eProfit() { return hProfit().mean(); }
-    public Double sdProfit() { return Math.sqrt(hProfit().variance()); }
-    public Double pptd() { return hProfit().mean()*hProfit().n()/days(); }
-    public Double winRate() { int n=wins+ties+losses; return wins/(double)n; }
-    public Double buyRate() { int n=wins+ties+losses; return n/(double)prices.length; }
-    public int days() { return prices.length; }
-    public Histogram hProfit() { return hProfit; }
-    void summary() { System.out.println("summary:"); System.out.println(this); }
+    #public static String header() { return "name,bankroll,eProfit,sdProfit,pptd,winRate,buyRate,days,hProfit"; }
     public static String toLine(String[] names,Object[] objects) {
         StringBuffer s=new StringBuffer();
         for(int i=0;i<names.length;++i) {
