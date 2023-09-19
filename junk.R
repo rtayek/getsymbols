@@ -1,8 +1,0 @@
-l<-list()
-l<-append(l,"abc")
-l<-append(l,"def")
-print(length(l))
-for(e in l)
-    print(e)
-apply(l, 1, function(x){cat(x, sep = '\t'); cat("\n")})
-apply(l, 1, function(x){cat(x); cat("\n")})

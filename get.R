@@ -1,3 +1,5 @@
+# get a list of stocks that we can get 1 years worth of data from yahoo.
+# the write a file file a list of those stocks.
 library(quantmod)
 from=Sys.Date()-365
 to=Sys.Date()
@@ -21,7 +23,7 @@ readOne<-function(filename) {
             expr = {
                 getSymbols(symbol,src="yahoo",from=from,to=to)
                 good=good+1
-                #print(sprintf("good: %s %d %d",symbol,good,n))
+                #print(sprintf("good: %15s %d %d",symbol,good,n))
                 df[nrow(df)+1,]<-row
             },
             error = function(e){ 
