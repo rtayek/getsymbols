@@ -1,0 +1,7 @@
+library(quantmod)
+getSymbols("AAPL")
+write.zoo(AAPL, file = "newapple.csv", sep = ",")
+z <- read.csv.zoo("newapple.csv")
+class(z)
+x <- as.xts(z)
+write.zoo(x, "newapple2.csv", sep = ",")

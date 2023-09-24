@@ -1,13 +1,16 @@
-library(quantmod)
-from<-"2016-01-01" # leap year
-to<-"2017-01-01"
-symbol<-"AAPL"
-getSymbols(symbol,from=from,to=to)
-class(AAPL)
-write.zoo(AAPL,file="newapple.txt",sep=",")
-x<-read.zoo("newapple.txt")
-class(x)
-x<-as.xts(x,RECLASS=TRUE) # has errors
-# write.zoo(x,file="newerapple.txt",sep=",") # crashes
+library(xts)
+ts <- xts(x = rnorm(n = 3),
+           order.by = seq(as.Date("2016-01-01"), 
+                          length = 3,
+                          by = "days"))
+print(ts)
+class(ts)
+write.zoo(ts, file="x.xts")
+cat(paste0(readLines("x.xts"), collapse="\n"))
+x <- read.zoo("x.xts")
+x
 
-
+write.zoo(ts, file="xrn.xts", row.names=TRUE)
+cat(paste0(readLines("xrn.xts"), collapse="\n"))
+xrn <- read.zoo("xrn.xts")
+xrn

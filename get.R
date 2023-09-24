@@ -15,10 +15,11 @@ readOne<-function(filename) {
     df<-symbols[0,]
     good<-0
     n<-0
+    stopAt<-10
     for(i in 1:nrow(symbols)) {
         row<-symbols[i,]
         symbol<-row$Ticker
-        if(n>10) break
+        if(n>stopAt) break
         tryCatch(
             expr = {
                 getSymbols(symbol,src="yahoo",from=from,to=to)
