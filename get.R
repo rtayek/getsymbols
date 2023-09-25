@@ -1,5 +1,7 @@
-# get a list of stocks that we can get 1 years worth of data from yahoo.
-# the write a file file a list of those stocks.
+# get a list of stocks that we can get some data from yahoo.
+# then write a .csv file with those stocks.
+# using ystocks00.csv to make out.ystocks00.csv
+#
 library(quantmod)
 from=Sys.Date()-365
 to=Sys.Date()
@@ -15,7 +17,7 @@ readOne<-function(filename) {
     df<-symbols[0,]
     good<-0
     n<-0
-    stopAt<-10
+    stopAt<-1000 # slow, each ystocks file has 10k lines!
     for(i in 1:nrow(symbols)) {
         row<-symbols[i,]
         symbol<-row$Ticker
@@ -56,5 +58,7 @@ readOne<-function(filename) {
 }
 readOne("ystocks00.csv")
 print("-----------------------")
-readOne("out.ystocks00.csv")
+#readOne("out.ystocks00.csv") # eat our own dog food.
+
+
 

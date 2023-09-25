@@ -1,2 +1,6 @@
 r is just wierd. no easy way to read or write.
 seems linme you mist used read lines and write lines.
+
+play3 seems to agree with java code for buy[0-2].
+
+maybe read ystock00.csv and drive play 3.
