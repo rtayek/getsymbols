@@ -11,3 +11,5 @@ some() in play3 gets:
 Error in if (buy(i, prices)) { : missing value where TRUE/FALSE needed
 
 so add try catch block from get.R to some() in symbols.
+
+switched over to get0.R - more stable.

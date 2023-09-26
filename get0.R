@@ -29,19 +29,27 @@ getSymbol <- function(symbol, from = "1990-01-01", to = Sys.time()) {
 }
 myGetSymbols <- function(filename) {
     symbols <- read.csv(filename)
-    n<-nrow(symbols)
-    print(sprintf("%5s has %d rows.", filename, n))
+    rows<-nrow(symbols)
+    print(sprintf("%5s has %d rows.", filename, rows))
+    from="2022-01-01" # getting less data is faster
+    to="2023-01-01"
+    df<-symbols[0,] # copy cvs header
     good<-0
-    for (i in 1:n) {
+    n<-0
+    for (i in 1:rows) {
         row <- symbols[i, ]
         symbol <- row$Ticker
         print(sprintf("index: %d, symbol: %s", i, symbol))
-        #getSymbol(symbol,from,to)
-        ts <- getSymbol(symbol)
-        if(!is.null(ts)) good<-good+1
-        #if (i > 10) break
+        ts <- getSymbol(symbol,from,to)
+        n<-n+1
+        if(!is.null(ts)) {
+            good<-good+1
+            df[nrow(df)+1,]<-row # add good row
+        }
+        if (i > 100) break
     }
-    print(sprintf("good: %d, total: %d, rate: %7.3f",good,n,good/n))
+    print(sprintf("good: %d, total: %d, rate: %7.3f",good,rows,good/n))
+    return(df)
 }
 f<-function(symbol) {
     x<-getSymbol(symbol)
@@ -52,7 +60,13 @@ f<-function(symbol) {
 #x<-getSymbol("swksk9")
 #x <- f("AAPL")
 #x<- f("sdyqsduyqgg")
-system.time(
-    myGetSymbols("ystocks00.csv")
-)
+get<-function(filename) {
+    system.time(
+        df<-myGetSymbols(filename)
+    )
+    outputFile<-paste("newout.",filename,sep="")
+    write.csv(df,file=outputFile,row.names=FALSE)
+}
+filename<-"ystocks00.csv"
+get(filename)
 
