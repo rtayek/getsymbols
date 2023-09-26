@@ -197,8 +197,9 @@ some <- function(symbols) { # some stocks
     to = Sys.Date()
     print(sprintf("class: %s, %d rows", class(symbols), nrow(symbols)))
     print("--------------------------")
-    for (i in 1:nrow(symbols)) {
-        row <- symbols[i,]
+    #for (i in 1:nrow(symbols)) {
+    for (i in 510:520) {
+            row <- symbols[i,]
         symbol <- row$Ticker
         if (FALSE&&i == 1) {
             print(sprintf("row: %d", i))

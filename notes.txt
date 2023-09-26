@@ -4,3 +4,10 @@ seems linme you mist used read lines and write lines.
 play3 seems to agree with java code for buy[0-2].
 
 maybe read ystock00.csv and drive play 3.
+
+some() in play3 gets:
+
+[1] "JBK,   0.956,   0.149,   0.811"
+Error in if (buy(i, prices)) { : missing value where TRUE/FALSE needed
+
+so add try catch block from get.R to some() in symbols.

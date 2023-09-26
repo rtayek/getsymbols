@@ -1,8 +1,11 @@
+# this broke for some unknown reason.
+# switching to use get0 instead
+
 # get a list of stocks that we can get some data from yahoo.
 # then write a .csv file with those stocks.
 # using ystocks00.csv to make out.ystocks00.csv
 #
-library(quantmod)
+require(quantmod)
 from=Sys.Date()-365
 to=Sys.Date()
 #symbols<-read.csv("d:\\data\\yahoosymbols.csv")
@@ -19,32 +22,46 @@ readOne<-function(filename) {
     n<-0
     stopAt<-1000 # slow, each ystocks file has 10k lines!
     for(i in 1:nrow(symbols)) {
+        print(i)
         row<-symbols[i,]
         symbol<-row$Ticker
+        print(symbol)
         if(n>stopAt) break
-        tryCatch(
+        result<-tryCatch(
             expr = {
-                getSymbols(symbol,src="yahoo",from=from,to=to)
-                good=good+1
-                #print(sprintf("good: %15s %d %d",symbol,good,n))
-                df[nrow(df)+1,]<-row
+                data<-getSymbols(symbol,src="yahoo",from=from,to=to,env=NULL)
+                print("returning data")
+                return(data)
             },
             error = function(e){ 
-                #print("caught:",e)
+                print("caught:")
+                print(e)
+                return(NA)
             },
             warning = function(w){
-                #print("warning:",w)
+                print("warning:",w)
+                retunr(NA)
             },
             finally = {
                 #
             }
         )
-        n<-n+1
+        print("result 1")
+        print(result)
+        if (!is.na(result)) {
+            print("result")
+            print(class(result))
+            good=good+1
+            print(sprintf("good: %15s %d %d",symbol,good,n))
+            df[nrow(df)+1,]<-row
+        } else print("bandess")
+        n <- n + 1
+        print("eol")
     }
     print(sprintf("%d good out of %d",good,n))
     print("df")
     print(df)
-    outputFile<-paste("out.",filename,sep="")
+    outputFile<-paste("xout.",filename,sep="")
     write.csv(df,file=outputFile,row.names=FALSE)
     if(F) {
         newDf<-read.csv(outputFile)

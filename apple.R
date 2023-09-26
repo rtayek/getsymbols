@@ -9,5 +9,6 @@ file1="apple.csv"
 #write.zoo(AAPL, file=file1, row.names=TRUE)
 write.zoo(AAPL, file=file1, sep=",")
 cat(paste0(readLines(file1), collapse="\n"))
-head(AAPL,n=3)
+print("----")
+tail(AAPL,n=3)
 
