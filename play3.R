@@ -1,34 +1,13 @@
 library(quantmod)
+source("strategy.R")
 buffer = 5
 forecast = 3
 initialBankroll = 1.
 bet <- 1. # ,25 seems to work
 rake = .0
 verbosity <- 0
-#
-buy0 <- function(index, prices) {
-    return(T)
-}
-buy1 <- function(index, prices) {
-    p1 <- prices[index - 2]
-    
-    p2 <- prices[index - 1]
-    
-    return(p1 <= p2)
-    
-}
-buy2 <- function(index, prices) {
-    p1 <- prices[index - 3]
-    
-    p2 <- prices[index - 2]
-    
-    p3 <- prices[index - 1]
-    
-    # add a check for some mimimum increase?
-    return(p1 <= p2 && p2 <= p3)
-}
-
-run <- function(symbol, prices, buy) { # one stock
+run <- function(symbol, prices, buy) {
+    # one stock
     symnol <- symbol
     bankroll <- initialBankroll
     boughtAt <- 0. # switch for buy and hold
@@ -41,17 +20,15 @@ run <- function(symbol, prices, buy) { # one stock
                       bet,
                       rake))
     }
-    header<-function() {
+    header <- function() {
         return("name, bankroll, winRate, buyRate")
     }
-    toCSVLine<-function() {
-        sprintf(
-            "%s, %7.3f, %7.3f, %7.3f",
-            symbol,
-            bankroll,
-            wins / buys,
-            buys / length(prices)
-        )            
+    toCSVLine <- function() {
+        sprintf("%s, %7.3f, %7.3f, %7.3f",
+                symbol,
+                bankroll,
+                wins / buys,
+                buys / length(prices))
     }
     toString <- function() {
         sprintf(
@@ -63,7 +40,8 @@ run <- function(symbol, prices, buy) { # one stock
         )
     }
     
-    one <- function(i, boughtAt) { # one day
+    one <- function(i, boughtAt) {
+        # one day
         sell <- function(amountBet) {
             #print(sprintf("in sell, amount bet: %7.3f",amountBet))
             current <- prices[i]
@@ -154,11 +132,16 @@ run <- function(symbol, prices, buy) { # one stock
             }
         
     }
-    if(verbosity>0) print(sprintf(
-        "at eol, br: %7.3f, total rake: %7.3f, wins: %d, buys: %d",
-        bankroll,
-        totalRake,wins,buys
-    ))
+    if (verbosity > 0)
+        print(
+            sprintf(
+                "at eol, br: %7.3f, total rake: %7.3f, wins: %d, buys: %d",
+                bankroll,
+                totalRake,
+                wins,
+                buys
+            )
+        )
     #print(toString()) # make one like this for writing file
     print(toCSVLine())
     return(list(bankroll = bankroll, totalRake = totalRake))
@@ -192,19 +175,20 @@ apple <- function() {
     l
 }
 #apple()
-some <- function(symbols) { # some stocks
+some <- function(symbols) {
+    # some stocks
     from = Sys.Date() - 365
     to = Sys.Date()
     print(sprintf("class: %s, %d rows", class(symbols), nrow(symbols)))
     print("--------------------------")
-    #for (i in 1:nrow(symbols)) {
-    for (i in 510:520) {
-            row <- symbols[i,]
+    for (i in 1:nrow(symbols)) {
+        #for (i in 510:520) {
+        row <- symbols[i, ]
         symbol <- row$Ticker
-        if (FALSE&&i == 1) {
+        if (FALSE && i == 1) {
             print(sprintf("row: %d", i))
             print(row)
-            print(sprintf("symbol: %s", symbol))
+            print(sprintf("index: %d, symbol: %s",i,symbol))
         }
         
         x <- getSymbols(
@@ -214,24 +198,30 @@ some <- function(symbols) { # some stocks
             to = to,
             env = NULL
         )
-        #print(symbol)
+        if (any(is.na(x))) {
+            print(sprintf("index: %d, symbol: %s, has NA's!",i,symbol))
+            next
+        }
+        print(sprintf("index: %d, symbol: %s.",i,symbol))
         x <- as.data.frame(x)
         prices <- x[, 4]
         #print(head(prices))
         run(symbol, prices, buy1)
         
         #print("--------------------------")
-        if (FALSE&&i > 100)
+        if (FALSE && i > 100)
             break
     }
 }
-symbols <- read.csv("out.ystocks00.csv")
-print(sprintf("class: %s, %d rows", class(symbols), nrow(symbols)))
-if (nrow(symbols) == 0) {
-    print("0 rows!")
-    return(0)
+runSome <- function() {
+    symbols <- read.csv("newout.ystocks00.csv")
+    print(sprintf("class: %s, %d rows", class(symbols), nrow(symbols)))
+    if (nrow(symbols) == 0) {
+        print("0 rows!")
+        return(0)
+    }
+    df <- symbols[0, ] # copy header
+    #verbosity<-1
+    some(symbols)
+    
 }
-df <- symbols[0,] # copy header
-#verbosity<-1
-some(symbols)
-

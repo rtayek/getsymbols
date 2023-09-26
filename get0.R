@@ -1,5 +1,3 @@
-require(quantmod)
-rm(list = ls())
 getSymbol <- function(symbol, from = "1990-01-01", to = Sys.time()) {
     result <- tryCatch(
         expr = {
@@ -60,13 +58,15 @@ f<-function(symbol) {
 #x<-getSymbol("swksk9")
 #x <- f("AAPL")
 #x<- f("sdyqsduyqgg")
-get<-function(filename) {
+get<-function(filename) { # writes the good rows to a new file.
     system.time(
         df<-myGetSymbols(filename)
     )
     outputFile<-paste("newout.",filename,sep="")
     write.csv(df,file=outputFile,row.names=FALSE)
 }
-filename<-"ystocks00.csv"
-get(filename)
+writeGood <- function() {
+    filename <- "ystocks00.csv"
+    get(filename)
+}
 

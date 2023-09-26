@@ -13,3 +13,6 @@ Error in if (buy(i, prices)) { : missing value where TRUE/FALSE needed
 so add try catch block from get.R to some() in symbols.
 
 switched over to get0.R - more stable.
+
+splitting up into 4 files:
+    main, get0, strategy, and play3.
