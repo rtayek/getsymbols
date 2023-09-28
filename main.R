@@ -1,6 +1,1 @@
-rm(list = ls())
-require(quantmod)
-source("strategy.R")
-source("get0.R")
-source("play3.R")
-runSome() # old runs old some()
+

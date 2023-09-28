@@ -109,7 +109,7 @@ run <- function(symbol, prices, buy) {
         return(boughtAt)
         
     } # end of one()
-    #sprologue()
+    #prologue()
     r <- (buffer + 1):(length(prices) - forecast)
     if (verbosity > 0)
         print("------------------------------")
@@ -143,15 +143,18 @@ run <- function(symbol, prices, buy) {
             )
         )
     #print(toString()) # make one like this for writing file
-    print(toCSVLine())
-    return(list(bankroll = bankroll, totalRake = totalRake))
+    print(sprintf("csv: %s",toCSVLine()))
+    l1<-list(bankroll = bankroll, totalRake = totalRake)
+    l2<-list(symbol=symbol,bankroll=bankroll, winRate=wins / buys,  buyRate=buys / length(prices))
+    return(list(l1,l2))
 }
 testAdjustBankrollForR <- function() {
     prices = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
     prices = seq(1, 10)
     symbol <- "ABCD"
     rake <<- .01 # changing a global value
-    l <- run(symbol, prices, buy0)
+    lists <- run(symbol, prices, buy0)
+    l<-lists[[1]]
     epsilon = 1e-6
     expectedBankroll <- 1.37214
     expectedTotalRake <- 0.02188
@@ -160,7 +163,7 @@ testAdjustBankrollForR <- function() {
     if (abs(l$totalRake - expectedTotalRake) >= epsilon)
         print("fail 2")
 }
-#testAdjustBankrollForR() # agrees with PlayTestCase.testAsjustBankrollForR()
+testAdjustBankrollForR() # agrees with PlayTestCase.testAsjustBankrollForR()
 apple <- function() {
     z <- read.csv.zoo("apple.csv")
     class(z)
@@ -206,7 +209,7 @@ some <- function(symbols) {
         x <- as.data.frame(x)
         prices <- x[, 4]
         #print(head(prices))
-        run(symbol, prices, buy1)
+        run(symbol, prices, buy1) # run with straregy
         
         #print("--------------------------")
         if (FALSE && i > 100)

@@ -16,3 +16,17 @@ switched over to get0.R - more stable.
 
 splitting up into 4 files:
     main, get0, strategy, and play3.
+
+getting:     
+Warning messages:
+1: BMH.AX contains missing values. Some functions will not work if objects contain missing values in the middle of the series. Consider using na.omit(), na.approx(), na.fill(), etc to remove or replace them. 
+2: BRK.AX contains missing values. Some functions will not work if objects contain missing values in the middle of the series. Consider using na.omit(), na.approx(), na.fill(), etc to remove or replace them. 
+
+try to rewrite some() in play3.R using code from get0.R
+
+maybe changing get0 is easier. make it return a list of stuff or pass in a function and resturn? ....
+
+need to make run() in play3,R  return a list of  lists.
+
+getting HTTP error 429. rerun 00 and see if we are getting that. if we are, put in some sleeps.
+
