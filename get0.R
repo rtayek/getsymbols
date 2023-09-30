@@ -21,7 +21,7 @@ getSymbol <-
                 return(NULL)
             },
             warning = function(w) {
-                log_warn(sprintf("warning: ", w$message))
+                log_warn(sprintf("warning %s: ", w$message))
                 return(NULL)
             },
             finally = {
@@ -46,38 +46,35 @@ getGoodSymbols <- function(symbols, max, buy) {
     n <- 0
     for (i in 1:rows) {
         n <- n + 1
-        print(sprintf("index: %d", i))
-        log_info(sprintf("index: %d", i))
         row <- symbols[i,]
         symbol <- row$Ticker
         if (!is.null(symbol)) {
-            print(sprintf("index: %d, symbol: %s", i, symbol))
             ts <- getSymbol(symbol, from, to) # xts zoo time series
             if (!is.null(ts)) {
+                print(sprintf("index: %d, symbol: %s", i, symbol))
                 good <- good + 1
                 df[nrow(df) + 1, ] <- row # add good row
-                # add function or switch to run?
-                # doig both now
                 x <- as.data.frame(ts) # why do i need this?
                 prices <- x[, 4]
                 l <- run(symbol, prices, buy) # run with strategy
                 line <- l[[2]]
                 bankroll <- rbind(bankroll, line)
             } else {
-                print("time series is null!")
-                log_warn("time series is null!")
+                print(sprintf("index: %d, symbol: %s, has null time series!", i, symbol))
+                log_warn(sprintf("index: %d, symbol: %s, has null time series!", i, symbol))
+        
             }
             
         } else {
             print("symbol is null!")
-            log_warn("symbol is null!")
+            log_warn(sprintf("index: %d, symbol: NULL", i))
+            
         }
         period = 10
         if (i > 0 && i %% period == 0) {
             print("sleep")
             Sys.sleep(1)
         }
-        
         if (i > max)
             break
     }
@@ -85,24 +82,19 @@ getGoodSymbols <- function(symbols, max, buy) {
     print(sprintf("good: %d, processed: %d, rate: %7.3f", good, n, rate))
     return(list(df, bankroll))
 }
-dtrt <- function(filename, csvFile, bankrollFile, max) {
-    symbols <- read.csv(filename)
+dtrt <- function(symbols, csvFile, bankrollFile, max) {
     rows <- nrow(symbols)
-    print(sprintf("%5s has %d rows.", filename, rows))
-    log_info(sprintf("%5s has %d rows.", filename, rows))
     l <- getGoodSymbols(symbols, max, buy2)
     good <- l[[1]]
-    print(sprintf("good data frame for %s has %d rows.", filename, nrow(good)))
-    log_info(sprintf("good data frame for %s has %d rows.", filename, nrow(good)))
+    print(sprintf("good data frame has %d rows.", nrow(good)))
+    log_info(sprintf("good data frame has %d rows.", nrow(good)))
     bankroll <- l[[2]]
     print(sprintf(
-        "bankroll data frame for %s has %d rows.",
-        filename,
+        "bankroll data frame has %d rows.",
         nrow(bankroll)
     ))
     log_info(sprintf(
-        "bankroll data frame for %s has %d rows.",
-        filename,
+        "bankroll data frame has %d rows.",
         nrow(bankroll)
     ))
     write.csv(l[[1]], file = csvFile, row.names = FALSE)
@@ -113,15 +105,16 @@ dtrt <- function(filename, csvFile, bankrollFile, max) {
     return(l)
 }
 #log_threshold()
+p <- file.path("D:", "data", "yahoodata", fsep="\\")
 s <- 0:10
-s <- 4:4
+#s <- 1:1
 splits <- sprintf("%02d", s)
-logFiles <- paste("ystocks", splits, ".log", sep = "")
-inputFiles <- paste("ystocks", splits, ".csv", sep = "")
-goodFiles <- paste("good.ystocks", splits, ".csv", sep = "")
-BankrollFiles <- paste("bankroll.ystocks", splits, ".csv", sep = "")
+logFiles <- paste("log.", splits, ".log", sep = "")
+inputFiles <- paste(file.path(p,"split.", fsep="\\"), splits, ".csv", sep = "")
+goodFiles <- paste("good.", splits, ".csv", sep = "")
+BankrollFiles <- paste("bankroll.", splits, ".csv", sep = "")
 logFile <- "1.log"
-max <- 10
+max <- 100
 for (i in 1:length(s)) {
     file.remove(logFiles[i])
     log_appender(appender_file(logFiles[i]))
@@ -130,8 +123,13 @@ for (i in 1:length(s)) {
     filename <- inputFiles[i]
     print(sprintf("filename: %s, %s, %s. %s", filename, goodFiles[i], BankrollFiles[i],logFiles[i]))
     #qlog_info(sprintf("filename: %s", filename))
-    dtrt(filename, goodFiles[i], BankrollFiles[i], max)
+    symbols <- read.csv(filename)
+    rows <- nrow(symbols)
+    print(sprintf("%5s has %d rows.", filename, rows))
+    log_info(sprintf("%5s has %d rows.", filename, rows))
+    dtrt(symbols, goodFiles[i], BankrollFiles[i], max)
     Sys.sleep(1)
     
 }
 log_info("end.")
+ 
