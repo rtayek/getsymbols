@@ -30,3 +30,14 @@ need to make run() in play3,R  return a list of  lists.
 
 getting HTTP error 429. rerun 00 and see if we are getting that. if we are, put in some sleeps.
 
+checking for 429 and stopping now.
+maybe count the types of errors.
+
+strabge error near split 32:
+
+1] "index: 174, symbol: NWFFF"
+Error in if (buy(i, prices)) { : missing value where TRUE/FALSE needed
+
+
+
+

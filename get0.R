@@ -138,7 +138,7 @@ if (F) {
 }
 
 s <- 0:212
-#s <- 2:100
+s <- 34:212
 
 splits <- sprintf("%03d", s)
 logFiles <- paste(file.path("data", "log.",  fsep = "\\"),
@@ -171,7 +171,7 @@ for (i in 1:length(s)) {
     print(sprintf("%5s has %d rows.", filename, rows))
     log_info(sprintf("%5s has %d rows.", filename, rows))
     dtrt(symbols, goodFiles[i], bankrollFiles[i], max)
-    Sys.sleep(5)
+    Sys.sleep(200)
     
 }
 log_info("end.")
