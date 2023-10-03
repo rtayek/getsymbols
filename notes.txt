@@ -42,11 +42,14 @@ cut -d "," -f 1 file
 
 10/03/2023
 gather.R which makes highest.csv.
-highest.R which make a file like yahoosymbols.cs,
+highest.R which make a file like yahoosymbols.csv,
 but just has those symbold with the highest backrolls.
 
 we need to read ths with get0.R (or a new get.R),
 and experiemnt with buying stretegies.
 
+maybe read yahoo highest and:
+    1) use get0 or something like it to make bankroll files.
+    2) read the data for each stock and write it so java can read it.
 
 
