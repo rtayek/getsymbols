@@ -51,7 +51,6 @@ getGoodSymbols <- function(symbols, max, buy) {
         symbol <- row$Ticker
         if (!is.null(symbol)) {
             ts <- getSymbol(symbol, from, to) # xts zoo time series
-            # how to check for http 429 and slow down?
             #print(sprintf("index: %d, ts: %s",i,class(ts)))
             if ("xts" %in% class(ts)) {
                 print(sprintf("index: %d, symbol: %s", i, symbol))
@@ -138,7 +137,7 @@ if (F) {
 }
 
 s <- 0:212
-s <- 34:212
+s <- 192:212
 
 splits <- sprintf("%03d", s)
 logFiles <- paste(file.path("data", "log.",  fsep = "\\"),
@@ -171,6 +170,7 @@ for (i in 1:length(s)) {
     print(sprintf("%5s has %d rows.", filename, rows))
     log_info(sprintf("%5s has %d rows.", filename, rows))
     dtrt(symbols, goodFiles[i], bankrollFiles[i], max)
+    print(sprintf("%5s had %d rows.", filename, rows))
     Sys.sleep(200)
     
 }

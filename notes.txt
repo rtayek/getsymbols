@@ -38,6 +38,15 @@ strabge error near split 32:
 1] "index: 174, symbol: NWFFF"
 Error in if (buy(i, prices)) { : missing value where TRUE/FALSE needed
 
+cut -d "," -f 1 file
+
+10/03/2023
+gather.R which makes highest.csv.
+highest.R which make a file like yahoosymbols.cs,
+but just has those symbold with the highest backrolls.
+
+we need to read ths with get0.R (or a new get.R),
+and experiemnt with buying stretegies.
 
 
 

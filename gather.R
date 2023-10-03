@@ -1,5 +1,5 @@
 # files<-list.files(pattern=".\\data\\bankroll.*.csv") # does noy work!
-# gather the bankroll files and look at the top 200.
+# gather the bankroll files and sort descending.
 files<-list.files("data")
 once<-FALSE
 df<-NULL
@@ -19,6 +19,5 @@ for(file in files) {
     print(nrow(df))
 }
 sorted <- df[order(-df$bankroll),]
-print(head(sorted,250))
+print(head(sorted))
 write.csv(sorted,file=outputFile,row.names=FALSE)
-

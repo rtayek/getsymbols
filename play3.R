@@ -40,8 +40,7 @@ run <- function(symbol, prices, buy) {
         )
     }
     
-    one <- function(i, boughtAt) {
-        # one day
+    oneDay <- function(i, boughtAt) {
         sell <- function(amountBet) {
             #print(sprintf("in sell, amount bet: %7.3f",amountBet))
             current <- prices[i]
@@ -120,7 +119,7 @@ run <- function(symbol, prices, buy) {
             print("broke!")
             return(NULL)
         }
-        boughtAt <- one(i, boughtAt)
+        boughtAt <- oneDay(i, boughtAt)
         #print(sprintf("at bottom of loop, bankroll: %7.3f, total rake: %7.3f",bankroll,totalRake))
         if (verbosity > 0)
             print("------------------------------")
@@ -163,7 +162,7 @@ testAdjustBankrollForR <- function() {
     if (abs(l$totalRake - expectedTotalRake) >= epsilon)
         print("fail 2")
 }
-testAdjustBankrollForR() # agrees with PlayTestCase.testAsjustBankrollForR()
+#testAdjustBankrollForR() # agrees with PlayTestCase.testAsjustBankrollForR()
 apple <- function() {
     z <- read.csv.zoo("apple.csv")
     class(z)
