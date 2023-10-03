@@ -52,4 +52,9 @@ maybe read yahoo highest and:
     1) use get0 or something like it to make bankroll files.
     2) read the data for each stock and write it so java can read it.
 
+reading yahho highest and getting symbols
+get a lot of warnings (NA's). 
+only aboy 300 out of the 2,000 in yahoo highest.
+
+try with less data (was 1990 - present)
 
