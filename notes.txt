@@ -58,3 +58,8 @@ only aboy 300 out of the 2,000 in yahoo highest.
 
 try with less data (was 1990 - present)
 
+using last year seems to work fine. 
+this is as expected since that was how we got this data
+
+try a few more earlier years.
+

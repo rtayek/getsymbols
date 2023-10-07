@@ -5,7 +5,7 @@ from <- "2016-01-01" # leap year
 to <- "2017-01-01"
 symbol <- "AAPL"
 getSymbols(symbol, from=from, to=to)
-file1="apple.csv"
+file1<-"apple.csv"
 #write.zoo(AAPL, file=file1, row.names=TRUE)
 write.zoo(AAPL, file=file1, sep=",")
 cat(paste0(readLines(file1), collapse="\n"))

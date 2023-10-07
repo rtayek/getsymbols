@@ -6,8 +6,8 @@
 # using ystocks00.csv to make out.ystocks00.csv
 #
 require(quantmod)
-from=Sys.Date()-365
-to=Sys.Date()
+from<-Sys.Date()-365
+to<-Sys.Date()
 #symbols<-read.csv("d:\\data\\yahoosymbols.csv")
 readOne<-function(filename) {
     symbols<-read.csv(filename)

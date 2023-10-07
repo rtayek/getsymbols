@@ -17,5 +17,5 @@ xrn<-read.zoo(arn)
 xrn
 
 #x<-as.xts(x, RECLASS=TRUE)
-file2="answer2again.txt"
+file2<-"answer2again.txt"
 write.zoo(y, file=file2)

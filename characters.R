@@ -23,5 +23,5 @@ sprintf("%010d", 104)
 # [1] "0000000104"
 
 # needs string package
-#anim = 25499:25504
+#anim <- 25499:25504
 #str_pad(anim, width=6, pad="0")

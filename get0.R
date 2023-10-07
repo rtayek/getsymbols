@@ -31,11 +31,12 @@ getSymbol <-
         #print(sprintf("in getSymbol(): result: %s",class(result)))
         return(result)
     }
-getGoodSymbols <- function(symbols, max, buy) {
+runSomeStocks <- function(symbols, max, buy) {
     rows <- nrow(symbols)
-    from = "2022-01-01" # getting less data is faster
-    to = "2023-01-01"
-    df <- symbols[0,] # copy cvs header
+    # make from and to parameters.
+    from <- "2022-01-01" # getting less data is faster
+    to <- "2023-01-01"
+    df <- symbols[0, ] # copy cvs header
     bankroll <- data.frame(
         symbol = character(),
         bankroll = numeric(),
@@ -47,7 +48,7 @@ getGoodSymbols <- function(symbols, max, buy) {
     n <- 0
     for (i in 1:rows) {
         n <- n + 1
-        row <- symbols[i, ]
+        row <- symbols[i,]
         symbol <- row$Ticker
         if (!is.null(symbol)) {
             ts <- getSymbol(symbol, from, to) # xts zoo time series
@@ -55,11 +56,11 @@ getGoodSymbols <- function(symbols, max, buy) {
             if ("xts" %in% class(ts)) {
                 print(sprintf("index: %d, symbol: %s", i, symbol))
                 good <- good + 1
-                df[nrow(df) + 1,] <- row # add good row
+                df[nrow(df) + 1, ] <- row # add good row
                 x <- as.data.frame(ts) # why do i need this?
                 prices <- x[, 4] # closing price
                 l <-
-                    run(symbol, prices, buy) # run with strategy buy
+                    runOneStock(symbol, prices, buy) # run with strategy buy
                 line <- l[[2]]
                 bankroll <- rbind(bankroll, line)
             } else {
@@ -102,9 +103,9 @@ getGoodSymbols <- function(symbols, max, buy) {
     print(sprintf("good: %d, processed: %d, rate: %7.3f", good, n, rate))
     return(list(df, bankroll))
 }
-dtrt <- function(symbols, csvFile, bankrollFile, max) {
+runSymbolsAndPrintFiles <- function(symbols, csvFile, bankrollFile, max) {
     rows <- nrow(symbols)
-    l <- getGoodSymbols(symbols, max, buy2)
+    l <- runSomeStocks(symbols, max, buy2)
     good <- l[[1]]
     print(sprintf("good data frame has %d rows.", nrow(good)))
     log_info(sprintf("good data frame has %d rows.", nrow(good)))
@@ -114,64 +115,70 @@ dtrt <- function(symbols, csvFile, bankrollFile, max) {
     log_info(sprintf("bankroll data frame has %d rows.",
                      nrow(bankroll)))
     write.csv(l[[1]], file = csvFile, row.names = FALSE)
-    sorted <- bankroll[order(-bankroll$bankroll),]
+    sorted <- bankroll[order(-bankroll$bankroll), ]
     sorted <- format(sorted, digits = 3)
     write.csv(sorted, file = bankrollFile, row.names = FALSE)
     print("exit dtrt")
     return(l)
 }
 #log_threshold()
-max <- 5000
-p <- file.path("D:", "data", "yahoodata", fsep = "\\")
-if (F) {
+big <- function(max) {
     logFile <- "big.log"
     file.remove(logFile)
     log_appender(appender_file(logFile))
-    filename <- file.path(p, "yahoosymbols.csv", fsep = "\\")
+    #filename <- file.path(p, "yahoosymbols.csv", fsep = "\\")
+    filename <- file.path("data", "yahoohighest.csv", fsep = "\\")
     symbols <- read.csv(filename)
     rows <- nrow(symbols)
     print(sprintf("%5s has %d rows.", filename, rows))
     log_info(sprintf("%5s has %d rows.", filename, rows))
-    dtrt(symbols, "big.csv", " bankroll.csv", max)
-    stop()
+    runSymbolsAndPrintFiles(symbols, "big.csv", " bankroll.csv", max)
 }
-
-s <- 0:212
-s <- 192:212
-
-splits <- sprintf("%03d", s)
-logFiles <- paste(file.path("data", "log.",  fsep = "\\"),
-                  splits, ".log", sep = "")
-inputFiles <-
-    paste(file.path(p, "split.", fsep = "\\"), splits, ".csv", sep = "")
-goodFiles <- paste(file.path("data", "good.",  fsep = "\\"),
-                   splits, ".csv", sep = "")
-bankrollFiles <-
-    paste(file.path("data", "bankroll.",  fsep = "\\"),
-          splits, ".csv", sep = "")
-for (i in 1:length(s)) {
-    file.remove(logFiles[i])
-    log_appender(appender_file(logFiles[i]))
-    log_info("start.")
-    
-    filename <- inputFiles[i]
-    print(
-        sprintf(
-            "filename: %s, %s, %s. %s",
-            filename,
-            goodFiles[i],
-            bankrollFiles[i],
-            logFiles[i]
+readSplits <- function(s,max) {
+    splits <- sprintf("%03d", s)
+    logFiles <- paste(file.path("data", "log.",  fsep = "\\"),
+                      splits, ".log", sep = "")
+    inputFiles <-
+        paste(file.path(p, "split.", fsep = "\\"), splits, ".csv", sep = "")
+    goodFiles <- paste(file.path("data", "good.",  fsep = "\\"),
+                       splits, ".csv", sep = "")
+    bankrollFiles <-
+        paste(file.path("data", "bankroll.",  fsep = "\\"),
+              splits,
+              ".csv",
+              sep = "")
+    for (i in 1:length(s)) {
+        file.remove(logFiles[i])
+        log_appender(appender_file(logFiles[i]))
+        log_info("start.")
+        
+        filename <- inputFiles[i]
+        print(
+            sprintf(
+                "filename: %s, %s, %s. %s",
+                filename,
+                goodFiles[i],
+                bankrollFiles[i],
+                logFiles[i]
+            )
         )
-    )
-    #qlog_info(sprintf("filename: %s", filename))
-    symbols <- read.csv(filename)
-    rows <- nrow(symbols)
-    print(sprintf("%5s has %d rows.", filename, rows))
-    log_info(sprintf("%5s has %d rows.", filename, rows))
-    dtrt(symbols, goodFiles[i], bankrollFiles[i], max)
-    print(sprintf("%5s had %d rows.", filename, rows))
-    Sys.sleep(200)
-    
+        #qlog_info(sprintf("filename: %s", filename))
+        symbols <- read.csv(filename)
+        rows <- nrow(symbols)
+        print(sprintf("%5s has %d rows.", filename, rows))
+        log_info(sprintf("%5s has %d rows.", filename, rows))
+        runSymbolsAndPrintFiles(symbols, goodFiles[i], bankrollFiles[i], max)
+        print(sprintf("%5s had %d rows.", filename, rows))
+        Sys.sleep(200)
+        
+    }
+    log_info("end.")
 }
-log_info("end.")
+if (sys.nframe() == 0L) {
+    p <- file.path("D:", "data", "yahoodata", fsep = "\\")
+    max <- 5000
+    big(max)
+    # s <- 0:212
+    # s <- 192:212
+    readSplits(s, max)
+}

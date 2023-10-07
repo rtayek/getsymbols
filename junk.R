@@ -4,7 +4,7 @@ f<-function(x) {
 g<-function(x) {
     x+2
 }
-rog <- function(f) {
+frog <- function(f) {
     f()
     return(list(l,l2))
 }

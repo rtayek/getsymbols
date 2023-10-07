@@ -1,15 +1,15 @@
 library(quantmod)
 source("strategy.R")
-buffer = 5
-forecast = 3
-initialBankroll = 1.
+buffer <- 5
+forecast <- 3
+initialBankroll <- 1.
 bet <- 1. # ,25 seems to work
-rake = .0
+rake <- .0
 verbosity <- 0
-run <- function(symbol, prices, buy) {
+runOneStock <- function(symbol, prices, buy) {
     # one stock
     symnol <- symbol
-    bankroll <- initialBankroll
+    bankroll <<- initialBankroll
     boughtAt <- 0. # switch for buy and hold
     totalRake <- 0
     buys <- 0
@@ -107,7 +107,7 @@ run <- function(symbol, prices, buy) {
         }
         return(boughtAt)
         
-    } # end of one()
+    } # end of oneDay()
     #prologue()
     r <- (buffer + 1):(length(prices) - forecast)
     if (verbosity > 0)
@@ -152,7 +152,7 @@ testAdjustBankrollForR <- function() {
     prices = seq(1, 10)
     symbol <- "ABCD"
     rake <<- .01 # changing a global value
-    lists <- run(symbol, prices, buy0)
+    lists <- runOneStock(symbol, prices, buy0)
     l<-lists[[1]]
     epsilon = 1e-6
     expectedBankroll <- 1.37214
@@ -162,25 +162,23 @@ testAdjustBankrollForR <- function() {
     if (abs(l$totalRake - expectedTotalRake) >= epsilon)
         print("fail 2")
 }
-#testAdjustBankrollForR() # agrees with PlayTestCase.testAsjustBankrollForR()
-apple <- function() {
+testAdjustBankrollForR() # agrees with PlayTestCase.testAsjustBankrollForR()
+apple <- function() { # agrees with java code
+    rake <<- 0.
     z <- read.csv.zoo("apple.csv")
-    class(z)
     x <- as.xts(z)
     prices <- coredata(x$AAPL.Close)
     print(sprintf("%d prices.", length(prices)))
-    l <- run("apple", prices, buy0)
-    l
-    l <- run("apple", prices, buy1)
-    l
-    l <- run("apple", prices, buy2)
+#    l <- runOneStock("apple", prices, buy0)
+#    l
+#    l <- runOneStock("apple", prices, buy1)
+#    l
+    l <- runOneStock("apple", prices, buy2) ## agrees with java play
     l
 }
 #apple()
-some <- function(symbols) {
+some <- function(symbols,from,to) {
     # some stocks
-    from = Sys.Date() - 365
-    to = Sys.Date()
     print(sprintf("class: %s, %d rows", class(symbols), nrow(symbols)))
     print("--------------------------")
     for (i in 1:nrow(symbols)) {
@@ -208,14 +206,14 @@ some <- function(symbols) {
         x <- as.data.frame(x)
         prices <- x[, 4]
         #print(head(prices))
-        run(symbol, prices, buy1) # run with straregy
+        runOneStock(symbol, prices, buy1) # run with straregy
         
         #print("--------------------------")
         if (FALSE && i > 100)
             break
     }
 }
-runSome <- function() {
+runSome <- function() { # currently not useds
     symbols <- read.csv("newout.ystocks00.csv")
     print(sprintf("class: %s, %d rows", class(symbols), nrow(symbols)))
     if (nrow(symbols) == 0) {
@@ -224,6 +222,8 @@ runSome <- function() {
     }
     df <- symbols[0, ] # copy header
     #verbosity<-1
-    some(symbols)
+    from = Sys.Date() - 365
+    to = Sys.Date()
+    some(symbols,from,to)
     
 }
