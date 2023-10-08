@@ -25,7 +25,7 @@ getSymbol <-
                 return(w)
             },
             finally = {
-                # what gets returned here?
+                q# what gets returned here?
             }
         )
         #print(sprintf("in getSymbol(): result: %s",class(result)))
