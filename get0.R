@@ -10,7 +10,7 @@ getSymbol <-
             expr = {
                 return(getSymbols(
                     symbol,
-                    src = "yahoo",
+                    # src = "yahoo",
                     from = from,
                     to = to,
                     env = NULL
@@ -25,7 +25,7 @@ getSymbol <-
                 return(w)
             },
             finally = {
-                q# what gets returned here?
+                # what gets returned here?
             }
         )
         #print(sprintf("in getSymbol(): result: %s",class(result)))
@@ -51,7 +51,7 @@ runSomeStocks <- function(symbols, max, buy) {
         row <- symbols[i,]
         symbol <- row$Ticker
         if (!is.null(symbol)) {
-            ts <- getSymbol(symbol, from, to) # xts zoo time series
+            ts <- getSymbol(symbol, from=from, to=to) # xts zoo time series
             #print(sprintf("index: %d, ts: %s",i,class(ts)))
             if ("xts" %in% class(ts)) {
                 print(sprintf("index: %d, symbol: %s", i, symbol))
@@ -103,6 +103,7 @@ runSomeStocks <- function(symbols, max, buy) {
     print(sprintf("good: %d, processed: %d, rate: %7.3f", good, n, rate))
     return(list(df, bankroll))
 }
+# seems like each banroll is from a split in /d/data/yahoodata
 runSymbolsAndPrintFiles <- function(symbols, csvFile, bankrollFile, max) {
     rows <- nrow(symbols)
     l <- runSomeStocks(symbols, max, buy2)
@@ -182,3 +183,4 @@ if (sys.nframe() == 0L) {
     # s <- 192:212
     readSplits(s, max)
 }
+

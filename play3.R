@@ -176,7 +176,7 @@ apple <- function() { # agrees with java code
     l <- runOneStock("apple", prices, buy2) ## agrees with java play
     l
 }
-#apple()
+apple()
 some <- function(symbols,from,to) {
     # some stocks
     print(sprintf("class: %s, %d rows", class(symbols), nrow(symbols)))

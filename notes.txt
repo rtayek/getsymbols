@@ -1,5 +1,5 @@
 r is just wierd. no easy way to read or write.
-seems linme you mist used read lines and write lines.
+seems like you mist used read lines and write lines.
 
 play3 seems to agree with java code for buy[0-2].
 
@@ -63,3 +63,8 @@ this is as expected since that was how we got this data
 
 try a few more earlier years.
 
+check for http 209 first else done<-TRUE
+
+10/25/23
+giving up on java for now due to reading .csv files.
+try t 
