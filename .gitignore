@@ -5,3 +5,7 @@
 *.csv
 *.xts
 *.log
+!apple.csv
+!not429s.csv
+!not429s.bak
+
