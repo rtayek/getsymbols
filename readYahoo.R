@@ -3,8 +3,10 @@ rm(list = ls())
 # no, working here for now.
 # return a list of stocks that we have prices for.
 # try and get prices for the ones we don not have.
+# seems to be working. may require about 40 gb.
+# ao maybe move to /e/data/stock.
 source("get0.R")
-getPrices<-function(y,outputDir) {
+getPrices<-function(y,outputDir,start=1) {
     df <- y[0,] # copy header
     from <- "2018-01-01"
     to <- "2023-01-01"
@@ -14,11 +16,12 @@ getPrices<-function(y,outputDir) {
     ok <- 0
     bad <- 0
     n429<-0
-    for (i in 1:n) {
-        #if(i==1) next
-        if(i>5) break
+    for (i in start:n) {
+        if(i==1) next
+        #if(i>20) break
         #print(sprintf("top of main for loop: index: %d.",i))
-        print(ok)
+        print(sprintf("index %d, %d found, %d not found, %d ok, %d bad"
+                      ,i, found,notFound,ok,bad))
         symbol <- y$Ticker[i]
         if (!is.null(symbol)) { 
             outputFile<-paste(file.path(outputDir,symbol,fsep = "\\"),".csv",sep = "")
@@ -68,6 +71,7 @@ getPrices<-function(y,outputDir) {
                                 #stop()
                             } else {
                                 done <- TRUE
+                                df[nrow(df) + 1,] <- y[i,] # save errors
                                 # print("some other kind of error")
                                 if(count>0)
                                     print(sprintf("index: %d, symbol: %s recovered other", i, symbol))
@@ -113,12 +117,13 @@ getPrices<-function(y,outputDir) {
 once <- FALSE
 y <- getYahooStocks()
 
-outputDir<-file.path("d:", "ray", "rapps", "getSymbols", "data", "prices2" , fsep = "\\")
+#outputDir<-file.path("d:", "ray", "rapps", "getSymbols", "data", "prices2" , fsep = "\\")
+outputDir<-file.path("e:", "data", fsep = "\\")
 if (file.exists(outputDir)) {
     print(sprintf("output dir %s exists.", outputDir))
 } else {
     print(sprintf("output dir %s does not exists!", outputDir))
 }
-df<-getPrices(y,outputDir)
+df<-getPrices(y,outputDir,start=1)
 head(df)
 tail(df)
