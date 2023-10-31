@@ -5,6 +5,7 @@ once<-FALSE
 df<-NULL
 outputFile<-file.path("data", "highest.csv",  fsep = "\\")
 for(file in files) {
+    # about 200 files with 47000 entries.
     if(startsWith(file,"bankroll")) {
         p<-file.path("data", file,  fsep = "\\")
         x<-read.csv(p)

@@ -4,6 +4,17 @@ require(quantmod)
 source("strategy.R")
 #source("get0.R")
 source("play3.R")
+getYahooStocks <- function() {
+    yahooFile <- file.path("d:", "data", "yahoodata", "yahoosymbols.csv",  fsep = "\\")
+    y <- read.csv(yahooFile)
+    #print(sprintf("yahoo.csv has %d rows.", nrow(y)))
+    w3 <- which(nchar(y$Exchange) != 3)
+    #print(sprintf("w3 has %d elements.", length(w3)))
+    w0 <- which(nchar(y$Exchange) == 0)
+    #print(sprintf("w0 has %d elements.", length(w0)))
+    # looks like all of the exchanges are empty or have 3 characters.
+    return(y)
+}
 getSymbol <-
     function(symbol, from = "1990-01-01", to = Sys.time()) {
         result <- tryCatch(
@@ -133,9 +144,11 @@ big <- function(max) {
     rows <- nrow(symbols)
     print(sprintf("%5s has %d rows.", filename, rows))
     log_info(sprintf("%5s has %d rows.", filename, rows))
-    runSymbolsAndPrintFiles(symbols, "big.csv", " bankroll.csv", max)
+    runSymbolsAndPrintFiles(symbols, "big.csv", "bankroll.csv", max)
 }
 readSplits <- function(s,max) {
+    #  read split files
+    # then run symnolds and print files
     splits <- sprintf("%03d", s)
     logFiles <- paste(file.path("data", "log.",  fsep = "\\"),
                       splits, ".log", sep = "")
@@ -148,7 +161,9 @@ readSplits <- function(s,max) {
               splits,
               ".csv",
               sep = "")
+    print(length(s))
     for (i in 1:length(s)) {
+        print(i)
         file.remove(logFiles[i])
         log_appender(appender_file(logFiles[i]))
         log_info("start.")
@@ -168,9 +183,9 @@ readSplits <- function(s,max) {
         rows <- nrow(symbols)
         print(sprintf("%5s has %d rows.", filename, rows))
         log_info(sprintf("%5s has %d rows.", filename, rows))
-        runSymbolsAndPrintFiles(symbols, goodFiles[i], bankrollFiles[i], max)
+        #runSymbolsAndPrintFiles(symbols, goodFiles[i], bankrollFiles[i], max)
         print(sprintf("%5s had %d rows.", filename, rows))
-        Sys.sleep(200)
+        #Sys.sleep(200)
         
     }
     log_info("end.")
@@ -179,8 +194,8 @@ if (sys.nframe() == 0L) {
     p <- file.path("D:", "data", "yahoodata", fsep = "\\")
     max <- 5000
     big(max)
-    # s <- 0:212
+    s <- 0:212
     # s <- 192:212
-    readSplits(s, max)
+    readSplits(s, max) # and writes bankroll, good.csv and log files
 }
 

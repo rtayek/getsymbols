@@ -6,7 +6,7 @@ buy1 <- function(index, prices) {
     
     p2 <- prices[index - 1]
     
-    return(p1 <= p2)
+    return(p1 < p2)
     
 }
 buy2 <- function(index, prices) {
@@ -17,5 +17,5 @@ buy2 <- function(index, prices) {
     p3 <- prices[index - 1]
     
     # add a check for some mimimum increase?
-    return(p1 <= p2 && p2 <= p3)
+    return(p1 < p2 && p2 < p3)
 }

@@ -176,7 +176,8 @@ apple <- function() { # agrees with java code
     l <- runOneStock("apple", prices, buy2) ## agrees with java play
     l
 }
-apple()
+a<-apple()
+# getting 1.1540557154982802 with new buy2 in the java version.
 some <- function(symbols,from,to) {
     # some stocks
     print(sprintf("class: %s, %d rows", class(symbols), nrow(symbols)))

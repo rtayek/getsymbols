@@ -65,6 +65,5 @@ try a few more earlier years.
 
 check for http 209 first else done<-TRUE
 
-10/25/23
-giving up on java for now due to reading .csv files.
-try t 
+10/25/23 giving up on java for now due to reading .csv files.
+10/27/23 got open csv to work fine in the java version
