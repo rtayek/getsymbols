@@ -6,17 +6,17 @@ rm(list = ls())
 # seems to be working. may require about 40 gb.
 # ao maybe move to /e/data/stock.
 source("get0.R")
-getPrices<-function(y,outputDir,start=1) {
+getPrices<-function(y,outputDir,not429s,start=1,stop=nrow(y)) {
+    if(is.null(not429s)) not429s <- y[0,] # copy header. should not happen
     df <- y[0,] # copy header
     from <- "2018-01-01"
     to <- "2023-01-01"
-    n <- nrow(y)
     found <- 0
     notFound <- 0
     ok <- 0
     bad <- 0
     n429<-0
-    for (i in start:n) {
+    for (i in start:stop) {
         if(i==1) next
         #if(i>20) break
         #print(sprintf("top of main for loop: index: %d.",i))
@@ -30,10 +30,13 @@ getPrices<-function(y,outputDir,start=1) {
             if (file.exists(outputFile)) {
                 found <- found + 1
                 print(sprintf("symbol: %s has file: %s", symbol, outputFile))
-                df[nrow(df) + 1,] <- y[i,] #
             } else {
                 notFound <- notFound + 1
                 print(sprintf("symbol: %s has no file: %s", symbol, outputFile))
+                if(symbol %in% not429s$Ticker) {
+                    print(sprintf("skip symbol: %s is not429's", symbol))
+                    next;
+                }
                 done <- FALSE
                 count <- 0
                 sleepTime<-1 # how to reset this
@@ -59,7 +62,7 @@ getPrices<-function(y,outputDir,start=1) {
                             if (grepl("HTTP error 429", ts$message)) {
                                 print(ts$message)
                                 if(count==0) n429<-n429+1 # only count as 1 occurrence
-                                sleepTime<-2*sleepTime
+                                #sleepTime<-2*sleepTime
                                 print(sprintf("start sleep for %f seconds",sleepTime))
                                 Sys.sleep(sleepTime)
                                 print(sprintf("end sleep for %f seconds",sleepTime))
@@ -81,6 +84,7 @@ getPrices<-function(y,outputDir,start=1) {
                             
                         } else { # warning?
                             done <- TRUE
+                            df[nrow(df) + 1,] <- y[i,] # save warnings
                             print(sprintf("index: %d, symbol: %s, has other error or warning!",i,symbol))
                             print(ts$message)
                             log_warn(sprintf("index: %d, symbol: %s, has other error or warning!",i,symbol))
@@ -124,6 +128,21 @@ if (file.exists(outputDir)) {
 } else {
     print(sprintf("output dir %s does not exists!", outputDir))
 }
-df<-getPrices(y,outputDir,start=1)
+not429sFilename<-"not429s.csv"
+not429s<- y[0,] # copy header
+if(file.exists(not429sFilename)) {
+    not429s<-read.csv(not429sFilename)
+}
+nrow(not429s) 
+df<-getPrices(y,outputDir,not429s,start=15049)
+print(sprintf("new not249s: %d",nrow(df)))
+if(nrow(df)>1) {
+    not429s <- rbind(not429s, df)
+    file.copy(from = not429sFilename, to = "not429s.bak",overwrite = TRUE)
+    write.csv(not429s,file="not429s.csv", row.names = FALSE)
+    last<-not429s$Ticker[nrow(not429s)] 
+    newStart<-which(y$Ticker==last)+1
+    print(sprintf("new start: %d",newStart))
+}
 head(df)
 tail(df)
