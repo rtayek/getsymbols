@@ -133,8 +133,9 @@ not429s<- y[0,] # copy header
 if(file.exists(not429sFilename)) {
     not429s<-read.csv(not429sFilename)
 }
+# 8850 prices now
 nrow(not429s) 
-df<-getPrices(y,outputDir,not429s,start=15049)
+df<-getPrices(y,outputDir,not429s,start=50929)
 print(sprintf("new not249s: %d",nrow(df)))
 if(nrow(df)>1) {
     not429s <- rbind(not429s, df)
