@@ -135,7 +135,10 @@ if(file.exists(not429sFilename)) {
 }
 # 8850 prices now
 nrow(not429s) 
-df<-getPrices(y,outputDir,not429s,start=50929)
+# [1] "index 94372, 0 found, 33 not found, 8 ok, 25 bad"
+# [1] "symbol: COM7.BK has no file: e:\\data\\COM7.BK.csv
+
+df<-getPrices(y,outputDir,not429s,start=106329)
 print(sprintf("new not249s: %d",nrow(df)))
 if(nrow(df)>1) {
     not429s <- rbind(not429s, df)
