@@ -1,3 +1,5 @@
+https://investexcel.net/all-yahoo-finance-stock-tickers/
+
 r is just wierd. no easy way to read or write.
 seems like you mist used read lines and write lines.
 

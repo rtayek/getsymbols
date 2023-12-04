@@ -5,6 +5,10 @@ rm(list = ls())
 # try and get prices for the ones we don not have.
 # seems to be working. may require about 40 gb.
 # ao maybe move to /e/data/stock.
+# 11/28/23 moving to new pc.
+# this reads a big list of stocks (100k) from a .csv file.
+# 12/4/23 adding missing.csv from java plays.
+# try to read this and get price data instead of reading the big yahoo file.
 source("get0.R")
 getPrices<-function(y,outputDir,not429s,start=1,stop=nrow(y)) {
     if(is.null(not429s)) not429s <- y[0,] # copy header. should not happen

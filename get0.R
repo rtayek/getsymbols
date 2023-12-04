@@ -4,6 +4,11 @@ require(quantmod)
 source("strategy.R")
 #source("get0.R")
 source("play3.R")
+getMissingStocks <- function() {
+    missingFile <- file.path("d:", "data", "yahoodata", "yahoosymbols.csv",  fsep = "\\")
+    y <- read.csv(missingFile)
+    return(y)
+}
 getYahooStocks <- function() {
     yahooFile <- file.path("d:", "data", "yahoodata", "yahoosymbols.csv",  fsep = "\\")
     y <- read.csv(yahooFile)
