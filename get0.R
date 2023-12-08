@@ -4,13 +4,8 @@ require(quantmod)
 source("strategy.R")
 #source("get0.R")
 source("play3.R")
-getMissingStocks <- function() {
-    missingFile <- file.path("d:", "data", "yahoodata", "yahoosymbols.csv",  fsep = "\\")
-    y <- read.csv(missingFile)
-    return(y)
-}
-getYahooStocks <- function() {
-    yahooFile <- file.path("d:", "data", "yahoodata", "yahoosymbols.csv",  fsep = "\\")
+getYahooStocks <- function(dataFolder) {
+    yahooFile <- file.path(dataFolder,"data", "yahoodata", "yahoosymbols.csv",  fsep = "\\")
     y <- read.csv(yahooFile)
     #print(sprintf("yahoo.csv has %d rows.", nrow(y)))
     w3 <- which(nchar(y$Exchange) != 3)
@@ -21,8 +16,9 @@ getYahooStocks <- function() {
     return(y)
 }
 getSymbol <-
-    function(symbol, from = "1990-01-01", to = Sys.time()) {
-        result <- tryCatch(
+    function(symbol, from = "1990-01-01", to = "2023-10-01") {
+    #function(symbol, from = "1990-01-01", to = Sys.time()) {
+            result <- tryCatch(
             expr = {
                 return(getSymbols(
                     symbol,
@@ -33,11 +29,11 @@ getSymbol <-
                 ))
             },
             error = function(e) {
-                log_error(sprintf("error: %s", e$message))
+                #log_error(sprintf("error: %s", e$message))
                 return(e)
             },
             warning = function(w) {
-                log_warn(sprintf("warning %s: ", w$message))
+                #log_warn(sprintf("warning %s: ", w$message))
                 return(w)
             },
             finally = {
@@ -135,7 +131,7 @@ runSymbolsAndPrintFiles <- function(symbols, csvFile, bankrollFile, max) {
     sorted <- bankroll[order(-bankroll$bankroll), ]
     sorted <- format(sorted, digits = 3)
     write.csv(sorted, file = bankrollFile, row.names = FALSE)
-    print("exit dtrt")
+    print("runSymbolsAndPrintFiles")
     return(l)
 }
 #log_threshold()
@@ -195,10 +191,11 @@ readSplits <- function(s,max) {
     }
     log_info("end.")
 }
-if (sys.nframe() == 0L) {
+if(FALSE)if (sys.nframe() == 0L) {
     p <- file.path("D:", "data", "yahoodata", fsep = "\\")
     max <- 5000
-    big(max)
+    stop()
+    big(max) # this reads yahoo highest. probbaly obsolete now.
     s <- 0:212
     # s <- 192:212
     readSplits(s, max) # and writes bankroll, good.csv and log files

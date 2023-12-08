@@ -9,6 +9,8 @@ rm(list = ls())
 # this reads a big list of stocks (100k) from a .csv file.
 # 12/4/23 adding missing.csv from java plays.
 # try to read this and get price data instead of reading the big yahoo file.
+# got this to read the big list on the new pc.
+# ...
 source("get0.R")
 getPrices<-function(y,outputDir,not429s,start=1,stop=nrow(y)) {
     if(is.null(not429s)) not429s <- y[0,] # copy header. should not happen
@@ -131,9 +133,15 @@ logFile <- "readYahoo.log"
 file.remove(logFile)
 log_appender(appender_file(logFile))
 once <- FALSE
-y <- getYahooStocks()
-#outputDir<-file.path("d:", "ray", "rapps", "getSymbols", "data", "prices2" , fsep = "\\")
-outputDir<-file.path("e:", "data", fsep = "\\")
+dataFolder=file.path("c:","dfromrays8350", fsep = "\\")
+if (file.exists(dataFolder)) {
+    print(sprintf("output dir %s exists.", dataFolder))
+} else {
+    print(sprintf("output dir %s does not exists!", dataFolder))
+}
+y<-getYahooStocks(dataFolder) # works
+print(sprintf("y has %s rows.", nrow(y)))
+outputDir<-file.path("c:", "data", fsep = "\\")
 if (file.exists(outputDir)) {
     print(sprintf("output dir %s exists.", outputDir))
 } else {
